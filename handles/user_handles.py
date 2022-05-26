@@ -1,3 +1,4 @@
+from curses.ascii import HT
 from sqlalchemy.orm import Session
 from schemas.login_user_request import LoginUserRequest
 from schemas.register_user_request import RegisterUserRequest
@@ -10,6 +11,18 @@ from schemas.login_user_response import LoginUserResponse
 
 
 def handle_register_new_user(register_data: RegisterUserRequest, db: Session):
+    # check if password is less than 4 chars
+    if len(register_data.password) < 4 :
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Password should be at least 4 characters.")
+    
+    # check if phone number is empty
+    if len(register_data.phone_number) == 0:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Phone number is empty.")
+
+    # check if name is empty
+    if len(register_data.name) == 0:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Name is empty.")
+
     # hash password
     try:
         pwd_context = CryptContext(schemes=['bcrypt'])

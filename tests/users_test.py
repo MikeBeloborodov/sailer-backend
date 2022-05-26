@@ -2,7 +2,7 @@ import unittest
 from fastapi.testclient import TestClient
 from routes.main import app
 from fastapi import status
-from schemas.create_user_response import CreateUserResponse
+from schemas.register_user_response import CreateUserResponse
 
 class TestCreateUser(unittest.TestCase):
 

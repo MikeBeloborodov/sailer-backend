@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, HttpUrl
 from datetime import datetime
 from typing import Optional
 
@@ -10,4 +10,4 @@ class CreateUserResponse(BaseModel):
     name: str
     user_id: int
     user_credits: float
-    avatar: Optional[str]
+    avatar: Optional[HttpUrl]

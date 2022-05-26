@@ -4,6 +4,10 @@ from typing import Optional
 
 class CreateUserRequest(BaseModel):
     email: EmailStr
-    phone: str
+    password: str
+    phone_number: str
     name: str
     avatar: Optional[HttpUrl]
+
+    class Config:
+        orm_mode = True

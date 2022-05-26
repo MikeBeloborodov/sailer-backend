@@ -2,17 +2,17 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
-from database.settings import settings
-from database.database_logic import Base
+from database import global_settings
+from database import database_logic
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 config.set_main_option("sqlalchemy.url", 
-                            f"postgresql://{settings.database_username}:"
-                            f"{settings.database_password}@"
-                            f"{settings.database_hostname}/"
-                            f"{settings.database_name}")
+                            f"postgresql://{global_settings.settings.database_username}:"
+                            f"{global_settings.settings.database_password}@"
+                            f"{global_settings.settings.database_hostname}/"
+                            f"{global_settings.settings.database_name}")
 
 
 # Interpret the config file for Python logging.
@@ -24,7 +24,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = Base.metadata
+target_metadata = database_logic.Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

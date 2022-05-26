@@ -1,14 +1,14 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database.settings import settings
+from database import global_settings
 from database.models import Base
 from database.database_logic import engine
 
 SQLALCHEMY_TEST_DATABASE_URL = (f"postgresql://"
-                            f"{settings.database_username}:"
-                            f"{settings.database_password}@"
-                            f"{settings.database_hostname}/"
-                            f"{settings.database_name}_test")
+                            f"{global_settings.settings.database_username}:"
+                            f"{global_settings.settings.database_password}@"
+                            f"{global_settings.settings.database_hostname}/"
+                            f"{global_settings.settings.database_name}_test")
 
 
 engine = create_engine(SQLALCHEMY_TEST_DATABASE_URL)

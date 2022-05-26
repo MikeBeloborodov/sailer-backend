@@ -1,13 +1,12 @@
-from json import JSONDecoder
 import unittest
 from fastapi.testclient import TestClient
-from routes.main import app
 from fastapi import status
+from routes.main import app
 from schemas.register_user_response import RegisterUserResponse
 from schemas.login_user_response import LoginUserResponse
 from database.database_logic import get_db
 from tests.database_for_tests import override_get_db
-from utils_for_tests import delete_test_user
+from tests import utils_for_tests
 
 
 class TestUsers(unittest.TestCase):
@@ -31,7 +30,7 @@ class TestUsers(unittest.TestCase):
         assert res_data['email'] == "admin@mail.com"
         assert res_data['phone_number'] == "+79120347221"
         assert res_data['name'] == "Alex"
-        delete_test_user("admin@mail.com")
+        utils_for_tests.delete_test_user("admin@mail.com")
 
 
     def test_register_user_wrong_email(self) -> None:
@@ -123,8 +122,9 @@ class TestUsers(unittest.TestCase):
                                                         "password": "admin", 
                                                         "phone_number": "+79120347221", 
                                                         "name": "Alex"})
+
         res = self.client.get("/users/login", json={"email": "aadmin@mail.com", "password": "admin"})
-        delete_test_user("admin@mail.com")
+        utils_for_tests.delete_test_user("admin@mail.com")
         assert res.status_code == status.HTTP_403_FORBIDDEN
 
 
@@ -133,8 +133,9 @@ class TestUsers(unittest.TestCase):
                                                         "password": "admin", 
                                                         "phone_number": "+79120347221", 
                                                         "name": "Alex"})
+
         res = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "aadmin"})
-        delete_test_user("admin@mail.com")
+        utils_for_tests.delete_test_user("admin@mail.com")
         assert res.status_code == status.HTTP_403_FORBIDDEN
 
 
@@ -143,8 +144,9 @@ class TestUsers(unittest.TestCase):
                                                         "password": "admin", 
                                                         "phone_number": "+79120347221", 
                                                         "name": "Alex"})
+
         res = self.client.get("/users/login", json={"email": "admin@mail.com"})
-        delete_test_user("admin@mail.com")
+        utils_for_tests.delete_test_user("admin@mail.com")
         assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
@@ -153,8 +155,9 @@ class TestUsers(unittest.TestCase):
                                                         "password": "admin", 
                                                         "phone_number": "+79120347221", 
                                                         "name": "Alex"})
+
         res = self.client.get("/users/login", json={"password": "admin"})
-        delete_test_user("admin@mail.com")
+        utils_for_tests.delete_test_user("admin@mail.com")
         assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
@@ -163,8 +166,9 @@ class TestUsers(unittest.TestCase):
                                                         "password": "admin", 
                                                         "phone_number": "+79120347221", 
                                                         "name": "Alex"})
+
         res = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
-        delete_test_user("admin@mail.com")
+        utils_for_tests.delete_test_user("admin@mail.com")
         res_data = res.json()
         print(res_data)
         assert res.status_code == status.HTTP_200_OK

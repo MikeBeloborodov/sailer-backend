@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from tests.database_for_tests import engine 
+from tests.database_for_tests import engine
 from database.models import User
 
 

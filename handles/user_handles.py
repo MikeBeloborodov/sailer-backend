@@ -1,4 +1,3 @@
-from curses.ascii import HT
 from sqlalchemy.orm import Session
 from schemas.login_user_request import LoginUserRequest
 from schemas.register_user_request import RegisterUserRequest
@@ -6,7 +5,7 @@ from database.models import User
 from fastapi import HTTPException, status
 from passlib.context import CryptContext
 from database.utils import time_stamp
-from authentication.oauth import create_access_token
+from authentication import oauth
 from schemas.login_user_response import LoginUserResponse
 
 
@@ -62,6 +61,6 @@ def handle_login_user(login_data: LoginUserRequest, db: Session):
         raise HTTPException(status.HTTP_403_FORBIDDEN, detail="Wrong credentials.")
 
     # if everything is okay we send data back
-    access_token = create_access_token(data = {"user_id" : found_user.user_id})
+    access_token = oauth.create_access_token(data = {"user_id" : found_user.user_id})
 
     return LoginUserResponse(access_token=access_token, token_type="bearer")

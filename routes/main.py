@@ -5,7 +5,7 @@ import routes.users
 from database.database_logic import Base, engine
 
 # sqalchemy creates tables
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)
 
 
 app = FastAPI()

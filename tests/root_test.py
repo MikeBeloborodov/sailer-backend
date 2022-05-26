@@ -4,7 +4,7 @@ from routes.main import app
 from schemas.message import Message
 from fastapi import status
 
-class TestCreateUser(unittest.TestCase):
+class TestRoot(unittest.TestCase):
 
     client = TestClient(app)
 

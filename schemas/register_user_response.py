@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr, HttpUrl
 from datetime import datetime
 from typing import Optional
 
-class CreateUserResponse(BaseModel):
+class RegisterUserResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
     email: EmailStr
@@ -14,3 +14,4 @@ class CreateUserResponse(BaseModel):
 
     class Config:
         orm_mode = True
+        

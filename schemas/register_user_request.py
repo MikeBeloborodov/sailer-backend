@@ -1,8 +1,7 @@
-from curses.ascii import HT
 from pydantic import BaseModel, EmailStr, HttpUrl
 from typing import Optional
 
-class CreateUserRequest(BaseModel):
+class RegisterUserRequest(BaseModel):
     email: EmailStr
     password: str
     phone_number: str
@@ -11,3 +10,4 @@ class CreateUserRequest(BaseModel):
 
     class Config:
         orm_mode = True
+        

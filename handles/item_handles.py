@@ -31,16 +31,35 @@ def handle_register_new_item(register_item_data: RegisterItemRequest, user_id: i
 def handle_get_all_items(user_id: int, db: Session):
     # execution check
     try:
-        posts = (db.query(Item)
+        items = (db.query(Item)
                     .all())
     except Exception as execution_error:
+        print(execution_error)
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, 
                                     detail="Could not retrieve data from DB")
 
     # availability check
-    if not posts:
+    if not items:
         raise HTTPException(status.HTTP_404_NOT_FOUND, 
                                     detail="Items database is empty")
     
-    # if ok return all posts
-    return posts
+    # if ok return all items
+    return items
+
+
+def handle_get_item_by_id(user_id: int, item_id: int, db: Session):
+    try:
+        item = db.query(Item).filter(Item.item_id == item_id)
+        found_item = item.first()
+    except Exception as execution_error:
+        print(execution_error)
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, 
+                                    detail="Could not retrieve data from DB")
+
+    # availability check
+    if not found_item:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, 
+                                    detail="Item does not exist")
+    
+    # if ok return the item
+    return found_item

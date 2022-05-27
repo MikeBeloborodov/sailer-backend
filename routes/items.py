@@ -8,6 +8,7 @@ from schemas.register_item_response import RegisterItemResponse
 from schemas.get_item_response import GetItemResponse
 from handles.item_handles import handle_register_new_item
 from handles.item_handles import handle_get_all_items
+from handles.item_handles import handle_get_item_by_id
 
 router = APIRouter(
     prefix="/items",
@@ -26,5 +27,12 @@ def register_new_item(register_item_data: RegisterItemRequest,
 def get_all_items(user_id: int = Depends(oauth.get_current_user),
                     db: Session = Depends(get_db)):
     return handle_get_all_items(user_id, db)
+
+
+@router.get("/{item_id}", status_code=status.HTTP_200_OK, response_model=GetItemResponse)
+def get_all_items(item_id: int,
+                user_id: int = Depends(oauth.get_current_user),
+                db: Session = Depends(get_db)):
+    return handle_get_item_by_id(user_id, item_id, db)
 
 

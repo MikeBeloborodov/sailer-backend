@@ -5,6 +5,15 @@ from database.models import Item
 from schemas.register_item_request import RegisterItemRequest
 
 def handle_register_new_item(register_item_data: RegisterItemRequest, user_id: int, db: Session):
+    # check if title is is empty
+    if len(register_item_data.title) == 0 :
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Title is empty")
+    
+    # check if address is empty
+    if len(register_item_data.address) == 0:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Address is empty.")
+
+    
     # save item to db
     try:
         item_to_save = Item(**register_item_data.dict(), owner_id=user_id)

@@ -26,7 +26,7 @@ class RegisterItemResponse(BaseModel):
     updated_at: datetime
     owner_id: int
     title: str
-    description: str
+    description: Optional[str]
     price: float
     cathegory: CathegoryEnum
     address: str

@@ -1,12 +1,12 @@
 from sqlalchemy.orm import Session
-from schemas.login_user_request import LoginUserRequest
-from schemas.register_user_request import RegisterUserRequest
+from schemas.user_schemas.login_user_request import LoginUserRequest
+from schemas.user_schemas.register_user_request import RegisterUserRequest
 from database.models import User
 from fastapi import HTTPException, status
 from passlib.context import CryptContext
 from database.utils import time_stamp
 from authentication import oauth
-from schemas.login_user_response import LoginUserResponse
+from schemas.user_schemas.login_user_response import LoginUserResponse
 
 
 def handle_register_new_user(register_user_data: RegisterUserRequest, db: Session):

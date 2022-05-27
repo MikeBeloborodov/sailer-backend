@@ -1,5 +1,5 @@
 from fastapi import FastAPI, status
-from schemas.message import Message
+from schemas.misc_schemas.message import Message
 from fastapi.middleware.cors import CORSMiddleware
 import routes.users
 import routes.items

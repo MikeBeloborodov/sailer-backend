@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from database.utils import time_stamp
 from database.models import Item
-from schemas.register_item_request import RegisterItemRequest
+from schemas.item_schemas.register_item_request import RegisterItemRequest
 
 def handle_register_new_item(register_item_data: RegisterItemRequest, user_id: int, db: Session):
     # check if title is is empty

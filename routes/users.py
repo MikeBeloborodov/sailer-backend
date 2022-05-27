@@ -1,11 +1,11 @@
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.orm import Session
-from schemas.register_user_request import RegisterUserRequest
-from schemas.register_user_response import RegisterUserResponse
+from schemas.user_schemas.register_user_request import RegisterUserRequest
+from schemas.user_schemas.register_user_response import RegisterUserResponse
 from handles.user_handles import handle_register_new_user, handle_login_user
 from database.database_logic import get_db
-from schemas.login_user_response import LoginUserResponse
-from schemas.login_user_request import LoginUserRequest
+from schemas.user_schemas.login_user_response import LoginUserResponse
+from schemas.user_schemas.login_user_request import LoginUserRequest
 
 
 router = APIRouter(

@@ -1,7 +1,7 @@
 import unittest
 from fastapi.testclient import TestClient
 from routes.main import app
-from schemas.message import Message
+from schemas.misc_schemas.message import Message
 from fastapi import status
 
 class TestRoot(unittest.TestCase):

@@ -2,8 +2,8 @@ import unittest
 from fastapi.testclient import TestClient
 from fastapi import status
 from routes.main import app
-from schemas.login_user_response import LoginUserResponse
-from schemas.register_item_response import RegisterItemResponse
+from schemas.user_schemas.login_user_response import LoginUserResponse
+from schemas.item_schemas.register_item_response import RegisterItemResponse
 from database.database_logic import get_db
 from tests.database_for_tests import override_get_db
 from tests import utils_for_tests

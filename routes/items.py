@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 from authentication import oauth
 from typing import List
 from database.database_logic import get_db
-from schemas.register_item_request import RegisterItemRequest
-from schemas.register_item_response import RegisterItemResponse
-from schemas.get_item_response import GetItemResponse
+from schemas.item_schemas.register_item_request import RegisterItemRequest
+from schemas.item_schemas.register_item_response import RegisterItemResponse
+from schemas.item_schemas.get_item_response import GetItemResponse
 from handles.item_handles import handle_register_new_item
 from handles.item_handles import handle_get_all_items
 from handles.item_handles import handle_get_item_by_id

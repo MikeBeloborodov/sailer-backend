@@ -25,3 +25,22 @@ def handle_register_new_item(register_item_data: RegisterItemRequest, user_id: i
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error.")
 
     return item_to_save
+
+
+
+def handle_get_all_items(user_id: int, db: Session):
+    # execution check
+    try:
+        posts = (db.query(Item)
+                    .all())
+    except Exception as execution_error:
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, 
+                                    detail="Could not retrieve data from DB")
+
+    # availability check
+    if not posts:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, 
+                                    detail="Items database is empty")
+    
+    # if ok return all posts
+    return posts

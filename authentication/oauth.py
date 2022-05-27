@@ -4,7 +4,6 @@ from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timedelta
 from database import global_settings
 from database.utils import time_stamp
-from schemas.login_user_response import LoginUserResponse
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')

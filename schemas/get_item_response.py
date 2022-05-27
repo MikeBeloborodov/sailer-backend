@@ -1,4 +1,4 @@
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, EmailStr, HttpUrl
 from typing import Optional
 from datetime import datetime
 from enum import Enum
@@ -19,7 +19,7 @@ class ConditionEnum(str, Enum):
     broken = 'broken'
 
 
-class RegisterItemResponse(BaseModel):
+class GetItemResponse(BaseModel):
     item_id: int
     created_at: datetime
     updated_at: datetime
@@ -31,6 +31,9 @@ class RegisterItemResponse(BaseModel):
     address: str
     condition: ConditionEnum
     photo: Optional[HttpUrl]
+    reserved: bool
+    sold: bool
+    
 
     class Config:
         orm_mode = True

@@ -19,158 +19,279 @@ class TestUsers(unittest.TestCase):
 
 
     def test_register_user_right_way(self) -> None:
-        res = self.client.post("/users/register", json={"email": "admin@mail.com", 
-                                                        "password": "admin", 
-                                                        "phone_number": "+79120347221", 
-                                                        "name": "Alex"})
-        
-        assert res.status_code == status.HTTP_201_CREATED
-        res_data = res.json()
-        RegisterUserResponse(**res_data)
-        assert res_data['email'] == "admin@mail.com"
-        assert res_data['phone_number'] == "+79120347221"
-        assert res_data['name'] == "Alex"
-        utils_for_tests.delete_test_user("admin@mail.com")
+        try:
+            res = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                            "password": "admin", 
+                                                            "phone_number": "+79120347221", 
+                                                            "name": "Alex"})
+            
+            assert res.status_code == status.HTTP_201_CREATED
+            res_data = res.json()
+            RegisterUserResponse(**res_data)
+            assert res_data['email'] == "admin@mail.com"
+            assert res_data['phone_number'] == "+79120347221"
+            assert res_data['name'] == "Alex"
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
 
 
     def test_register_user_wrong_email(self) -> None:
-        res = self.client.post("/users/register", json={"email": "something", 
-                                                        "password": "1234353", 
-                                                        "phone_number": "+79111147221", 
-                                                        "name": "John"})
+        try: 
+            res = self.client.post("/users/register", json={"email": "something", 
+                                                            "password": "1234353", 
+                                                            "phone_number": "+79111147221", 
+                                                            "name": "John"})
 
-        assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+            assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
 
 
     def test_register_user_no_email(self) -> None:
-        res = self.client.post("/users/register", json={ 
-                                                    "password": "1234353", 
-                                                    "phone_number": "+79111147221", 
-                                                    "name": "John"
-                                                    })
-        
-        assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        try:
+            res = self.client.post("/users/register", json={ 
+                                                        "password": "1234353", 
+                                                        "phone_number": "+79111147221", 
+                                                        "name": "John"
+                                                        })
+            
+            assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
 
 
     def test_register_user_no_phone_number(self) -> None:
-        res = self.client.post("/users/register", json={"email": "admin@mail.com", 
-                                                    "password": "1234353", 
-                                                    "name": "John"})
+        try:
+            res = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                        "password": "1234353", 
+                                                        "name": "John"})
 
-        assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+            assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
 
 
     def test_register_user_no_password(self) -> None:
-        res = self.client.post("/users/register", json={"email": "admin@mail.com", 
-                                                    "phone_number": "+79111147221", 
-                                                    "name": "John"})
-        
-        assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        try:
+            res = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                        "phone_number": "+79111147221", 
+                                                        "name": "John"})
+            
+            assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
 
 
     def test_register_user_no_name(self) -> None:
-        res = self.client.post("/users/register", json={"email": "admin@mail.com", 
-                                                    "password": "1234353", 
-                                                    "phone_number": "+79111147221", 
-                                                    })
-        
-        assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        try:
+            res = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                        "password": "1234353", 
+                                                        "phone_number": "+79111147221", 
+                                                        })
+            
+            assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
 
 
     def test_register_user_empty_email(self) -> None:
-        res = self.client.post("/users/register", json={"email": "", 
-                                                    "password": "1234353", 
-                                                    "phone_number": "+79111147221",
-                                                    "name": "John" 
-                                                    })
-        
-        assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        try:
+            res = self.client.post("/users/register", json={"email": "", 
+                                                        "password": "1234353", 
+                                                        "phone_number": "+79111147221",
+                                                        "name": "John" 
+                                                        })
+            
+            assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
 
 
     def test_register_user_empty_password(self) -> None:
-        res = self.client.post("/users/register", json={"email": "admin@mail.com", 
-                                                    "password": "", 
-                                                    "phone_number": "+79111147221", 
-                                                    "name": "John"
-                                                    })
-        
-        assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        try:
+            res = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                        "password": "", 
+                                                        "phone_number": "+79111147221", 
+                                                        "name": "John"
+                                                        })
+            
+            assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
 
 
     def test_register_user_empty_phone_number(self) -> None:
-        res = self.client.post("/users/register", json={"email": "admin@mail.com", 
-                                                    "password": "admin", 
-                                                    "phone_number": "", 
-                                                    "name": "John"
-                                                    })
-        
-        assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        try:
+            res = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                        "password": "admin", 
+                                                        "phone_number": "", 
+                                                        "name": "John"
+                                                        })
+            
+            assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
 
 
     def test_register_user_empty_name(self) -> None:
-        res = self.client.post("/users/register", json={"email": "admin@mail.com", 
+        try:
+            res = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                        "password": "admin", 
+                                                        "phone_number": "+79111147221", 
+                                                        "name": ""
+                                                        })
+            
+            assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
+
+
+    def test_register_user_same_email(self) -> None:
+        try:
+            res_normal_email = self.client.post("/users/register", 
+                                                    json={"email": "admin@mail.com", 
+                                                        "password": "admin", 
+                                                        "phone_number": "+79111147221", 
+                                                        "name": "Alex"
+                                                        })
+            
+            assert res_normal_email.status_code == status.HTTP_201_CREATED
+
+            res_same_email = self.client.post("/users/register", 
+                                                    json={"email": "admin@mail.com", 
+                                                        "password": "admin", 
+                                                        "phone_number": "+79112147221", 
+                                                        "name": "Alex"
+                                                        })
+
+            assert res_same_email.status_code == status.HTTP_403_FORBIDDEN
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
+
+
+    def test_register_user_same_phone(self) -> None:
+        try:
+            res_normal_phone = self.client.post("/users/register", 
+                                                json={"email": "admin@mail.com", 
                                                     "password": "admin", 
                                                     "phone_number": "+79111147221", 
-                                                    "name": ""
+                                                    "name": "Alex"
                                                     })
         
-        assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+            assert res_normal_phone.status_code == status.HTTP_201_CREATED
+
+            res_same_phone = self.client.post("/users/register", 
+                                                    json={"email": "admin2@mail.com", 
+                                                        "password": "admin", 
+                                                        "phone_number": "+79111147221", 
+                                                        "name": "Alex"
+                                                        })
+                                                        
+            assert res_same_phone.status_code == status.HTTP_403_FORBIDDEN
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
 
 
     def test_login_user_wrong_email(self) -> None:
-        res = self.client.post("/users/register", json={"email": "admin@mail.com", 
-                                                        "password": "admin", 
-                                                        "phone_number": "+79120347221", 
-                                                        "name": "Alex"})
+        try:
+            res = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                            "password": "admin", 
+                                                            "phone_number": "+79120347221", 
+                                                            "name": "Alex"})
 
-        res = self.client.get("/users/login", json={"email": "aadmin@mail.com", "password": "admin"})
-        utils_for_tests.delete_test_user("admin@mail.com")
-        assert res.status_code == status.HTTP_403_FORBIDDEN
+            res = self.client.get("/users/login", json={"email": "aadmin@mail.com", "password": "admin"})
+            assert res.status_code == status.HTTP_403_FORBIDDEN
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
 
 
     def test_login_user_wrong_password(self) -> None:
-        res = self.client.post("/users/register", json={"email": "admin@mail.com", 
-                                                        "password": "admin", 
-                                                        "phone_number": "+79120347221", 
-                                                        "name": "Alex"})
+        try:
+            res = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                            "password": "admin", 
+                                                            "phone_number": "+79120347221", 
+                                                            "name": "Alex"})
 
-        res = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "aadmin"})
-        utils_for_tests.delete_test_user("admin@mail.com")
-        assert res.status_code == status.HTTP_403_FORBIDDEN
+            res = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "aadmin"})
+            utils_for_tests.delete_test_user("admin@mail.com")
+            assert res.status_code == status.HTTP_403_FORBIDDEN
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
 
 
     def test_login_user_no_password(self) -> None:
-        res = self.client.post("/users/register", json={"email": "admin@mail.com", 
-                                                        "password": "admin", 
-                                                        "phone_number": "+79120347221", 
-                                                        "name": "Alex"})
+        try:
+            res = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                            "password": "admin", 
+                                                            "phone_number": "+79120347221", 
+                                                            "name": "Alex"})
 
-        res = self.client.get("/users/login", json={"email": "admin@mail.com"})
-        utils_for_tests.delete_test_user("admin@mail.com")
-        assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+            res = self.client.get("/users/login", json={"email": "admin@mail.com"})
+            assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
 
 
     def test_login_user_no_email(self) -> None:
-        res = self.client.post("/users/register", json={"email": "admin@mail.com", 
-                                                        "password": "admin", 
-                                                        "phone_number": "+79120347221", 
-                                                        "name": "Alex"})
+        try:
+            res = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                            "password": "admin", 
+                                                            "phone_number": "+79120347221", 
+                                                            "name": "Alex"})
 
-        res = self.client.get("/users/login", json={"password": "admin"})
-        utils_for_tests.delete_test_user("admin@mail.com")
-        assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+            res = self.client.get("/users/login", json={"password": "admin"})
+            assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
 
 
     def test_login_user_right_way(self) -> None:
-        res = self.client.post("/users/register", json={"email": "admin@mail.com", 
-                                                        "password": "admin", 
-                                                        "phone_number": "+79120347221", 
-                                                        "name": "Alex"})
+        try:
+            res = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                            "password": "admin", 
+                                                            "phone_number": "+79120347221", 
+                                                            "name": "Alex"})
 
-        res = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
-        utils_for_tests.delete_test_user("admin@mail.com")
-        res_data = res.json()
-        print(res_data)
-        assert res.status_code == status.HTTP_200_OK
-        LoginUserResponse(**res_data)
-        assert res_data['token_type'] == "bearer"
+            res = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
+            res_data = res.json()
+            print(res_data)
+            assert res.status_code == status.HTTP_200_OK
+            LoginUserResponse(**res_data)
+            assert res_data['token_type'] == "bearer"
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
+

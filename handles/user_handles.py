@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from schemas.user_schemas.login_user_request import LoginUserRequest
 from schemas.user_schemas.register_user_request import RegisterUserRequest
+from schemas.user_schemas.update_user_request import UpdateUserRequest
 from database.models import User
 from fastapi import HTTPException, status
 from passlib.context import CryptContext
@@ -21,6 +22,20 @@ def handle_register_new_user(register_user_data: RegisterUserRequest, db: Sessio
     # check if name is empty
     if len(register_user_data.name) == 0:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Name is empty.")
+
+    # check for same email address
+    query_same_email = db.query(User).filter(User.email == register_user_data.email)
+    user_same_email = query_same_email.first()
+
+    if user_same_email:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="User with this email already registred.")
+
+    # check for same phone number
+    query_same_phone = db.query(User).filter(User.phone_number == register_user_data.phone_number)
+    user_same_phone = query_same_phone.first()
+
+    if user_same_phone:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="User with this phone number already registred.")
 
     # hash password
     try:
@@ -64,3 +79,15 @@ def handle_login_user(login_data: LoginUserRequest, db: Session):
     access_token = oauth.create_access_token(data = {"user_id" : found_user.user_id})
 
     return LoginUserResponse(access_token=access_token, token_type="bearer")
+
+
+def handle_update_user_by_id(user_to_update_id: int, 
+                            register_user_data: UpdateUserRequest, 
+                            user_id: int, 
+                            db: Session):
+    
+    # get user with this id from db
+    pass
+
+
+

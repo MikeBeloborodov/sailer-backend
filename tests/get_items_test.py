@@ -75,125 +75,133 @@ class TestGetItems(unittest.TestCase):
 
 
     def test_get_all_items_empty_db(self):
-        # first of all we register user 
-        register_res = self.client.post("/users/register", json={"email": "admin@mail.com", 
-                                                        "password": "admin", 
-                                                        "phone_number": "+79120347221", 
-                                                        "name": "Alex"})
-        assert register_res.status_code == status.HTTP_201_CREATED
-        register_user_res_data = register_res.json()
-        register_user_res_converted_data = RegisterUserResponse(**register_user_res_data)
+        try:
+            # first of all we register user 
+            register_res = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                            "password": "admin", 
+                                                            "phone_number": "+79120347221", 
+                                                            "name": "Alex"})
+            assert register_res.status_code == status.HTTP_201_CREATED
+            register_user_res_data = register_res.json()
+            register_user_res_converted_data = RegisterUserResponse(**register_user_res_data)
 
-        # then we login user to get a token
-        login_res = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
-        assert login_res.status_code == status.HTTP_200_OK
+            # then we login user to get a token
+            login_res = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
+            assert login_res.status_code == status.HTTP_200_OK
 
-        # check status
-        res_get_all_items = self.client.get("/items")
-        assert res_get_all_items.status_code == status.HTTP_404_NOT_FOUND
+            # check status
+            res_get_all_items = self.client.get("/items")
+            assert res_get_all_items.status_code == status.HTTP_404_NOT_FOUND
 
-        # delete test user
-        utils_for_tests.delete_test_user()
+            # delete test user
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
 
 
     def test_get_all_items(self):
-        # first of all we register user 
-        register_res = self.client.post("/users/register", json={"email": "admin@mail.com", 
-                                                        "password": "admin", 
-                                                        "phone_number": "+79120347221", 
-                                                        "name": "Alex"})
-        assert register_res.status_code == status.HTTP_201_CREATED
-        register_user_res_data = register_res.json()
-        register_user_res_converted_data = RegisterUserResponse(**register_user_res_data)
+        try:
+            # first of all we register user 
+            register_res = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                            "password": "admin", 
+                                                            "phone_number": "+79120347221", 
+                                                            "name": "Alex"})
+            assert register_res.status_code == status.HTTP_201_CREATED
+            register_user_res_data = register_res.json()
+            register_user_res_converted_data = RegisterUserResponse(**register_user_res_data)
 
-        # then we login user to get a token
-        login_res = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
-        assert login_res.status_code == status.HTTP_200_OK
-        res_data = login_res.json()
-        converted_login_res = LoginUserResponse(**res_data)
+            # then we login user to get a token
+            login_res = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
+            assert login_res.status_code == status.HTTP_200_OK
+            res_data = login_res.json()
+            converted_login_res = LoginUserResponse(**res_data)
 
-        # after that we register our items with a valid token
-        self.client.headers = {
-            **self.client.headers,
-            "Authorization": f"Bearer {converted_login_res.access_token}"}
-        for item in self.test_items:
-            register_item_res = self.client.post("/items/register", json=item)
-            assert register_item_res.status_code == status.HTTP_201_CREATED
-            register_item_res_data = register_item_res.json()
-            RegisterItemResponse(**register_item_res_data)
-        
-        # check status
-        res_get_all_items = self.client.get("/items")
-        assert res_get_all_items.status_code == status.HTTP_200_OK
+            # after that we register our items with a valid token
+            self.client.headers = {
+                **self.client.headers,
+                "Authorization": f"Bearer {converted_login_res.access_token}"}
+            for item in self.test_items:
+                register_item_res = self.client.post("/items/register", json=item)
+                assert register_item_res.status_code == status.HTTP_201_CREATED
+                register_item_res_data = register_item_res.json()
+                RegisterItemResponse(**register_item_res_data)
+            
+            # check status
+            res_get_all_items = self.client.get("/items")
+            assert res_get_all_items.status_code == status.HTTP_200_OK
 
-        # delete test user
-        utils_for_tests.delete_test_user()
+            # check formating
+            res_get_all_items_data = res_get_all_items.json()
+            for data in res_get_all_items_data:
+                GetItemResponse(**data)
 
-        # check formating
-        res_get_all_items_data = res_get_all_items.json()
-        for data in res_get_all_items_data:
-            GetItemResponse(**data)
-
-        # check data
-        for i in range(len(res_get_all_items_data)):
-            assert res_get_all_items_data[i]["title"] == self.test_items[i]["title"]
-            assert res_get_all_items_data[i]["price"] == self.test_items[i]["price"]
-            assert res_get_all_items_data[i]["address"] == self.test_items[i]["address"]
-            assert res_get_all_items_data[i]["condition"] == self.test_items[i]["condition"]
-            assert res_get_all_items_data[i]["cathegory"] == self.test_items[i]["cathegory"]
-            assert res_get_all_items_data[i]["owner_id"] == register_user_res_converted_data.user_id
+            # check data
+            for i in range(len(res_get_all_items_data)):
+                assert res_get_all_items_data[i]["title"] == self.test_items[i]["title"]
+                assert res_get_all_items_data[i]["price"] == self.test_items[i]["price"]
+                assert res_get_all_items_data[i]["address"] == self.test_items[i]["address"]
+                assert res_get_all_items_data[i]["condition"] == self.test_items[i]["condition"]
+                assert res_get_all_items_data[i]["cathegory"] == self.test_items[i]["cathegory"]
+                assert res_get_all_items_data[i]["owner_id"] == register_user_res_converted_data.user_id
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
 
 
     def test_get_item_by_id(self):
-        # first of all we register user 
-        register_res = self.client.post("/users/register", json={"email": "admin@mail.com", 
-                                                        "password": "admin", 
-                                                        "phone_number": "+79120347221", 
-                                                        "name": "Alex"})
-        assert register_res.status_code == status.HTTP_201_CREATED
-        register_user_res_data = register_res.json()
-        register_user_res_converted_data = RegisterUserResponse(**register_user_res_data)
+        try:
+            # first of all we register user 
+            register_res = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                            "password": "admin", 
+                                                            "phone_number": "+79120347221", 
+                                                            "name": "Alex"})
+            assert register_res.status_code == status.HTTP_201_CREATED
+            register_user_res_data = register_res.json()
+            register_user_res_converted_data = RegisterUserResponse(**register_user_res_data)
 
-        # then we login user to get a token
-        login_res = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
-        assert login_res.status_code == status.HTTP_200_OK
-        res_data = login_res.json()
-        converted_login_res = LoginUserResponse(**res_data)
+            # then we login user to get a token
+            login_res = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
+            assert login_res.status_code == status.HTTP_200_OK
+            res_data = login_res.json()
+            converted_login_res = LoginUserResponse(**res_data)
 
-        # list to save id of items
-        items_id = []
-        # counter to compare recieved data with test_items
-        counter = 0
+            # list to save id of items
+            items_id = []
+            # counter to compare recieved data with test_items
+            counter = 0
 
-        # after that we register our items with a valid token
-        self.client.headers = {
-            **self.client.headers,
-            "Authorization": f"Bearer {converted_login_res.access_token}"}
-        for item in self.test_items:
-            register_item_res = self.client.post("/items/register", json=item)
-            assert register_item_res.status_code == status.HTTP_201_CREATED
-            register_item_res_data = register_item_res.json()
-            register_item_res_data_converted = RegisterItemResponse(**register_item_res_data)
-            items_id.append(register_item_res_data_converted.item_id)
-        
-        # check status
-        for item_id in items_id:
-            res_get_item_by_id = self.client.get(f"/items/{item_id}")
-            assert res_get_item_by_id.status_code == status.HTTP_200_OK
+            # after that we register our items with a valid token
+            self.client.headers = {
+                **self.client.headers,
+                "Authorization": f"Bearer {converted_login_res.access_token}"}
+            for item in self.test_items:
+                register_item_res = self.client.post("/items/register", json=item)
+                assert register_item_res.status_code == status.HTTP_201_CREATED
+                register_item_res_data = register_item_res.json()
+                register_item_res_data_converted = RegisterItemResponse(**register_item_res_data)
+                items_id.append(register_item_res_data_converted.item_id)
+            
+            # check status
+            for item_id in items_id:
+                res_get_item_by_id = self.client.get(f"/items/{item_id}")
+                assert res_get_item_by_id.status_code == status.HTTP_200_OK
 
-            res_get_item_by_id_data = GetItemResponse(**res_get_item_by_id.json())
+                res_get_item_by_id_data = GetItemResponse(**res_get_item_by_id.json())
 
-            #check data
-            assert res_get_item_by_id_data.title == self.test_items[counter]["title"]
-            assert res_get_item_by_id_data.price == self.test_items[counter]["price"]
-            assert res_get_item_by_id_data.address == self.test_items[counter]["address"]
-            assert res_get_item_by_id_data.condition == self.test_items[counter]["condition"]
-            assert res_get_item_by_id_data.cathegory == self.test_items[counter]["cathegory"]
-            assert res_get_item_by_id_data.owner_id == register_user_res_converted_data.user_id
+                #check data
+                assert res_get_item_by_id_data.title == self.test_items[counter]["title"]
+                assert res_get_item_by_id_data.price == self.test_items[counter]["price"]
+                assert res_get_item_by_id_data.address == self.test_items[counter]["address"]
+                assert res_get_item_by_id_data.condition == self.test_items[counter]["condition"]
+                assert res_get_item_by_id_data.cathegory == self.test_items[counter]["cathegory"]
+                assert res_get_item_by_id_data.owner_id == register_user_res_converted_data.user_id
 
-            counter += 1
+                counter += 1
 
-        # delete test user
-        utils_for_tests.delete_test_user()
-
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user()
         

@@ -8,6 +8,7 @@ from passlib.context import CryptContext
 from database.utils import time_stamp
 from authentication import oauth
 from schemas.user_schemas.login_user_response import LoginUserResponse
+from datetime import datetime
 
 
 def handle_register_new_user(register_user_data: RegisterUserRequest, db: Session):
@@ -82,12 +83,35 @@ def handle_login_user(login_data: LoginUserRequest, db: Session):
 
 
 def handle_update_user_by_id(user_to_update_id: int, 
-                            register_user_data: UpdateUserRequest, 
+                            user_update_data: UpdateUserRequest, 
                             user_id: int, 
                             db: Session):
+    try:
+        # get user with this id from db
+        old_user_query = db.query(User).filter(User.user_id == user_to_update_id)
+        old_user = old_user_query.first()
+    except Exception as db_error:
+        print(f"[!!] DB error occured: {db_error}")
+
+    # check if it exists
+    if not old_user:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="User with this id does not exist")
     
-    # get user with this id from db
-    pass
+    # check if user trying to update has the same id
+    if old_user.user_id != user_id:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="No access")
+
+    # save updates to db
+    try:
+        updated_user = user_update_data.dict()
+        updated_user['updated_at'] = datetime.now()
+        old_user_query.update(updated_user, synchronize_session=False)
+        db.commit()
+        db.refresh(old_user)
+    except Exception as update_error:
+        print(f"[!!] DB error while updating user: {update_error}")
+    
+    return old_user
 
 
 

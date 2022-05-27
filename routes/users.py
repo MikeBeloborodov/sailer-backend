@@ -4,7 +4,7 @@ from schemas.user_schemas.register_user_request import RegisterUserRequest
 from schemas.user_schemas.register_user_response import RegisterUserResponse
 from schemas.user_schemas.update_user_request import UpdateUserRequest
 from schemas.user_schemas.update_user_response import UpdateUserResponse
-from handles.user_handles import handle_register_new_user, handle_login_user
+from handles.user_handles import *
 from database.database_logic import get_db
 from schemas.user_schemas.login_user_response import LoginUserResponse
 from schemas.user_schemas.login_user_request import LoginUserRequest
@@ -34,9 +34,9 @@ def login_user(login_data: LoginUserRequest,
 # update user by id
 @router.patch("/{user_to_update_id}", status_code=status.HTTP_200_OK, response_model=UpdateUserResponse)
 def update_user_by_id(user_to_update_id: int,
-                    register_user_data: UpdateUserRequest,
+                    user_update_data: UpdateUserRequest,
                     user_id: int = Depends(oauth.get_current_user),
                     db: Session = Depends(get_db)):
-    return handle_update_user_by_id(user_to_update_id, register_user_data, user_id, db)
+    return handle_update_user_by_id(user_to_update_id, user_update_data, user_id, db)
 
 

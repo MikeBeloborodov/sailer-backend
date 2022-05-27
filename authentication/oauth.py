@@ -32,9 +32,7 @@ def verify_access_token(token: str, credentials_exception):
 
         if user_id is None:
             raise credentials_exception
-
-        # validate id with pydantic
-        token_data = LoginUserResponse(id=user_id)  
+            
     except JWTError as error:
         print(f"[{time_stamp()}][!!] VERIFY ACCESS TOKEN ERROR: {error}")
         raise credentials_exception

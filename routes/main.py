@@ -2,6 +2,7 @@ from fastapi import FastAPI, status
 from schemas.message import Message
 from fastapi.middleware.cors import CORSMiddleware
 import routes.users
+import routes.items
 from database.database_logic import Base, engine
 
 # sqalchemy creates tables
@@ -32,3 +33,8 @@ def root() -> Message:
 
 # router for users
 app.include_router(routes.users.router)
+
+
+# router for items
+app.include_router(routes.items.router)
+

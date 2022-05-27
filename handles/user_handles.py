@@ -9,30 +9,30 @@ from authentication import oauth
 from schemas.login_user_response import LoginUserResponse
 
 
-def handle_register_new_user(register_data: RegisterUserRequest, db: Session):
+def handle_register_new_user(register_user_data: RegisterUserRequest, db: Session):
     # check if password is less than 4 chars
-    if len(register_data.password) < 4 :
+    if len(register_user_data.password) < 4 :
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Password should be at least 4 characters.")
     
     # check if phone number is empty
-    if len(register_data.phone_number) == 0:
+    if len(register_user_data.phone_number) == 0:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Phone number is empty.")
 
     # check if name is empty
-    if len(register_data.name) == 0:
+    if len(register_user_data.name) == 0:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Name is empty.")
 
     # hash password
     try:
         pwd_context = CryptContext(schemes=['bcrypt'])
-        register_data.password = pwd_context.hash(register_data.password)
+        register_user_data.password = pwd_context.hash(register_user_data.password)
     except Exception as hash_error:
         print(f"[{time_stamp()}][!!] Unable to hash new user password: {hash_error}")
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error.")
     
     # save user to db
     try:
-        user_to_save = User(**register_data.dict())
+        user_to_save = User(**register_user_data.dict())
         db.add(user_to_save)
         db.commit()
         db.refresh(user_to_save)

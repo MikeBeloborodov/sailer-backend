@@ -3,13 +3,15 @@ from schemas.message import Message
 from fastapi.middleware.cors import CORSMiddleware
 import routes.users
 import routes.items
-from database.database_logic import Base, engine
+from database.models import Base
+from database.database_logic import engine
 
-# sqalchemy creates tables
-# Base.metadata.create_all(bind=engine)
+
+Base.metadata.create_all(bind=engine)
 
 
 app = FastAPI()
+
 
 # if you want only specific servers to be able to talk to your api
 # put them in origins, otherwise use "*" to allow everyone

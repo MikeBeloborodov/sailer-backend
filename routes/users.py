@@ -14,12 +14,14 @@ router = APIRouter(
 )
 
 
+# register user
 @router.post("/register", status_code=status.HTTP_201_CREATED, response_model=RegisterUserResponse)
 def register_new_user(register_user_data: RegisterUserRequest,
                     db: Session = Depends(get_db)):
     return handle_register_new_user(register_user_data, db)
 
 
+# login user
 @router.get("/login", status_code=status.HTTP_200_OK, response_model=LoginUserResponse)
 def login_user(login_data: LoginUserRequest,
                     db: Session = Depends(get_db)):

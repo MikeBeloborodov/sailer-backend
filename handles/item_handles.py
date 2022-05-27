@@ -32,6 +32,8 @@ def handle_get_all_items(user_id: int, db: Session):
     # execution check
     try:
         items = (db.query(Item)
+                    .filter(Item.deleted != 'true')
+                    .filter(Item.sold != 'true')
                     .all())
     except Exception as execution_error:
         print(execution_error)
@@ -49,7 +51,10 @@ def handle_get_all_items(user_id: int, db: Session):
 
 def handle_get_item_by_id(user_id: int, item_id: int, db: Session):
     try:
-        item = db.query(Item).filter(Item.item_id == item_id)
+        item = (db.query(Item)
+                .filter(Item.item_id == item_id)
+                .filter(Item.deleted != 'true')
+                .filter(Item.sold != 'true'))
         found_item = item.first()
     except Exception as execution_error:
         print(execution_error)

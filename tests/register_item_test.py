@@ -9,7 +9,7 @@ from tests.database_for_tests import override_get_db
 from tests import utils_for_tests
 
 
-class TestRegisterItems(unittest.TestCase):
+class TestRegisterItem(unittest.TestCase):
 
 
     app.dependency_overrides[get_db] = override_get_db

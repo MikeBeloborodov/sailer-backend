@@ -16,6 +16,7 @@ router = APIRouter(
 )
 
 
+# register item
 @router.post("/register", status_code=status.HTTP_201_CREATED, response_model=RegisterItemResponse)
 def register_new_item(register_item_data: RegisterItemRequest,
                     user_id: int = Depends(oauth.get_current_user),
@@ -23,12 +24,14 @@ def register_new_item(register_item_data: RegisterItemRequest,
     return handle_register_new_item(register_item_data, user_id, db)
 
 
+# get all items
 @router.get("/", status_code=status.HTTP_200_OK, response_model=List[GetItemResponse])
 def get_all_items(user_id: int = Depends(oauth.get_current_user),
                     db: Session = Depends(get_db)):
     return handle_get_all_items(user_id, db)
 
 
+# get item by id
 @router.get("/{item_id}", status_code=status.HTTP_200_OK, response_model=GetItemResponse)
 def get_all_items(item_id: int,
                 user_id: int = Depends(oauth.get_current_user),

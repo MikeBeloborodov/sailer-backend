@@ -32,7 +32,6 @@ class GetItemResponse(BaseModel):
     condition: ConditionEnum
     photo: Optional[HttpUrl]
     reserved: bool
-    sold: bool
     
 
     class Config:

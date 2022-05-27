@@ -1,6 +1,5 @@
 from database.database_logic import Base
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, Boolean
-from sqlalchemy.orm import relationship
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.sql.expression import text
 
@@ -21,9 +20,10 @@ class Item(Base):
     photo = Column(String, nullable=True)
     buyer_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=True)
     transaction_id = Column(Integer, nullable=True)
+    sold = Column(Boolean, nullable=False, server_default=text('false'))
     sold_at = Column(TIMESTAMP(timezone=True), nullable=True)
     reserved = Column(Boolean, nullable=False, server_default=text('false'))
-    sold = Column(Boolean, nullable=False, server_default=text('false'))
+    deleted = Column(Boolean, nullable=False, server_default=text('false'))
 
 
 class User(Base):

@@ -338,11 +338,340 @@ class TestUsers(unittest.TestCase):
             assert res_update_user_data_converted.name == "Kirill"
             assert res_update_user_data_converted.avatar == "https://www.w3schools.com/howto/img_avatar.png"
 
+            # login user after changes
+            res_login = self.client.get("/users/login", json={"email": "admin2@mail.com", "password": "admin2"})
+            assert res_login.status_code == status.HTTP_200_OK
+
         except Exception as error:
             raise error
         finally:
             utils_for_tests.delete_test_user("admin2@mail.com")
+            utils_for_tests.delete_test_user("admin@mail.com")
+
+
+    def test_update_user_only_email(self) -> None:
+        try:
+            # create new user
+            res_register = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                            "password": "admin", 
+                                                            "phone_number": "+79120347221", 
+                                                            "name": "Alex"})
+            
+            assert res_register.status_code == status.HTTP_201_CREATED
+            res_register_data = res_register.json()
+            res_register_data_converted = RegisterUserResponse(**res_register_data)
+
+            # login user
+            res_login = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
+            assert res_login.status_code == status.HTTP_200_OK
+            res_login_data = res_login.json()
+            login_data_converted = LoginUserResponse(**res_login_data)
+
+            # get token to the header
+            self.client.headers = {
+                **self.client.headers,
+                "Authorization": f"Bearer {login_data_converted.access_token}"}
+
+            # update payload
+            update_payload = {"email": "admin2@mail.com"}
+
+            # test response status code
+            res_update_user = self.client.patch(f"/users/{res_register_data_converted.user_id}", json=update_payload)
+            assert res_update_user.status_code == status.HTTP_200_OK
+
+            # test response data
+            res_update_user_data = res_update_user.json()
+            res_update_user_data_converted = UpdateUserResponse(**res_update_user_data)
+            assert res_update_user_data_converted.email == "admin2@mail.com"
+            assert res_update_user_data_converted.phone_number == "+79120347221"
+            assert res_update_user_data_converted.name == "Alex"
+            assert res_update_user_data_converted.avatar == None
+
+            # login user after changes
+            res_login = self.client.get("/users/login", json={"email": "admin2@mail.com", "password": "admin"})
+            assert res_login.status_code == status.HTTP_200_OK
+
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user("admin2@mail.com")
+            utils_for_tests.delete_test_user("admin@mail.com")
+
+
+    def test_update_user_only_password(self) -> None:
+        try:
+            # create new user
+            res_register = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                            "password": "admin", 
+                                                            "phone_number": "+79120347221", 
+                                                            "name": "Alex"})
+            
+            assert res_register.status_code == status.HTTP_201_CREATED
+            res_register_data = res_register.json()
+            res_register_data_converted = RegisterUserResponse(**res_register_data)
+
+            # login user
+            res_login = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
+            assert res_login.status_code == status.HTTP_200_OK
+            res_login_data = res_login.json()
+            login_data_converted = LoginUserResponse(**res_login_data)
+
+            # get token to the header
+            self.client.headers = {
+                **self.client.headers,
+                "Authorization": f"Bearer {login_data_converted.access_token}"}
+
+            # update payload
+            update_payload = {"password": "admin2"}
+
+            # test response status code
+            res_update_user = self.client.patch(f"/users/{res_register_data_converted.user_id}", json=update_payload)
+            assert res_update_user.status_code == status.HTTP_200_OK
+
+            # test response data
+            res_update_user_data = res_update_user.json()
+            res_update_user_data_converted = UpdateUserResponse(**res_update_user_data)
+            assert res_update_user_data_converted.email == "admin@mail.com"
+            assert res_update_user_data_converted.phone_number == "+79120347221"
+            assert res_update_user_data_converted.name == "Alex"
+            assert res_update_user_data_converted.avatar == None
+
+            # login user after changes
+            res_login = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin2"})
+            assert res_login.status_code == status.HTTP_200_OK
+
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user("admin2@mail.com")
+            utils_for_tests.delete_test_user("admin@mail.com")
 
 
 
+    def test_update_user_only_email(self) -> None:
+        try:
+            # create new user
+            res_register = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                            "password": "admin", 
+                                                            "phone_number": "+79120347221", 
+                                                            "name": "Alex"})
+            
+            assert res_register.status_code == status.HTTP_201_CREATED
+            res_register_data = res_register.json()
+            res_register_data_converted = RegisterUserResponse(**res_register_data)
+
+            # login user
+            res_login = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
+            assert res_login.status_code == status.HTTP_200_OK
+            res_login_data = res_login.json()
+            login_data_converted = LoginUserResponse(**res_login_data)
+
+            # get token to the header
+            self.client.headers = {
+                **self.client.headers,
+                "Authorization": f"Bearer {login_data_converted.access_token}"}
+
+            # update payload
+            update_payload = {"email": "admin2@mail.com"}
+
+            # test response status code
+            res_update_user = self.client.patch(f"/users/{res_register_data_converted.user_id}", json=update_payload)
+            assert res_update_user.status_code == status.HTTP_200_OK
+
+            # test response data
+            res_update_user_data = res_update_user.json()
+            res_update_user_data_converted = UpdateUserResponse(**res_update_user_data)
+            assert res_update_user_data_converted.email == "admin2@mail.com"
+            assert res_update_user_data_converted.phone_number == "+79120347221"
+            assert res_update_user_data_converted.name == "Alex"
+            assert res_update_user_data_converted.avatar == None
+
+            # login user after changes
+            res_login = self.client.get("/users/login", json={"email": "admin2@mail.com", "password": "admin"})
+            assert res_login.status_code == status.HTTP_200_OK
+
+             # create another user to check same email error
+            res_register_2 = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                            "password": "admin", 
+                                                            "phone_number": "+79120343221", 
+                                                            "name": "Alex"})
+
+            assert res_register_2.status_code == status.HTTP_201_CREATED
+            
+            # update payload
+            update_payload_2 = {"email": "admin@mail.com"}
+
+            # test response status code if this email already exists
+            res_update_user_2 = self.client.patch(f"/users/{res_register_data_converted.user_id}", json=update_payload_2)
+            assert res_update_user_2.status_code == status.HTTP_403_FORBIDDEN
+
+
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user("admin2@mail.com")
+            utils_for_tests.delete_test_user("admin@mail.com")
+
+
+    def test_update_user_only_phone_number(self) -> None:
+        try:
+            # create new user
+            res_register = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                            "password": "admin", 
+                                                            "phone_number": "+79120347221", 
+                                                            "name": "Alex"})
+            
+            assert res_register.status_code == status.HTTP_201_CREATED
+            res_register_data = res_register.json()
+            res_register_data_converted = RegisterUserResponse(**res_register_data)
+
+            # login user
+            res_login = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
+            assert res_login.status_code == status.HTTP_200_OK
+            res_login_data = res_login.json()
+            login_data_converted = LoginUserResponse(**res_login_data)
+
+            # get token to the header
+            self.client.headers = {
+                **self.client.headers,
+                "Authorization": f"Bearer {login_data_converted.access_token}"}
+
+            # update payload
+            update_payload = {"phone_number": "+79120347321"}
+
+            # test response status code
+            res_update_user = self.client.patch(f"/users/{res_register_data_converted.user_id}", json=update_payload)
+            assert res_update_user.status_code == status.HTTP_200_OK
+
+            # test response data
+            res_update_user_data = res_update_user.json()
+            res_update_user_data_converted = UpdateUserResponse(**res_update_user_data)
+            assert res_update_user_data_converted.email == "admin@mail.com"
+            assert res_update_user_data_converted.phone_number == "+79120347321"
+            assert res_update_user_data_converted.name == "Alex"
+            assert res_update_user_data_converted.avatar == None
+
+            # login user after changes
+            res_login = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
+            assert res_login.status_code == status.HTTP_200_OK
+
+            # create another user to check same phone number error
+            res_register_2 = self.client.post("/users/register", json={"email": "admin2@mail.com", 
+                                                            "password": "admin2", 
+                                                            "phone_number": "+79120347221", 
+                                                            "name": "Alex"})
+
+            assert res_register_2.status_code == status.HTTP_201_CREATED
+            
+            # update payload
+            update_payload_2 = {"phone_number": "+79120347221"}
+
+            # test response status code if this number already exists
+            res_update_user_2 = self.client.patch(f"/users/{res_register_data_converted.user_id}", json=update_payload_2)
+            assert res_update_user_2.status_code == status.HTTP_403_FORBIDDEN
+
+
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user("admin2@mail.com")
+            utils_for_tests.delete_test_user("admin@mail.com")
+
+
+    def test_update_user_only_name(self) -> None:
+        try:
+            # create new user
+            res_register = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                            "password": "admin", 
+                                                            "phone_number": "+79120347221", 
+                                                            "name": "Alex"})
+            
+            assert res_register.status_code == status.HTTP_201_CREATED
+            res_register_data = res_register.json()
+            res_register_data_converted = RegisterUserResponse(**res_register_data)
+
+            # login user
+            res_login = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
+            assert res_login.status_code == status.HTTP_200_OK
+            res_login_data = res_login.json()
+            login_data_converted = LoginUserResponse(**res_login_data)
+
+            # get token to the header
+            self.client.headers = {
+                **self.client.headers,
+                "Authorization": f"Bearer {login_data_converted.access_token}"}
+
+            # update payload
+            update_payload = {"name": "Sanya"}
+
+            # test response status code
+            res_update_user = self.client.patch(f"/users/{res_register_data_converted.user_id}", json=update_payload)
+            assert res_update_user.status_code == status.HTTP_200_OK
+
+            # test response data
+            res_update_user_data = res_update_user.json()
+            res_update_user_data_converted = UpdateUserResponse(**res_update_user_data)
+            assert res_update_user_data_converted.email == "admin@mail.com"
+            assert res_update_user_data_converted.phone_number == "+79120347221"
+            assert res_update_user_data_converted.name == "Sanya"
+            assert res_update_user_data_converted.avatar == None
+
+            # login user after changes
+            res_login = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
+            assert res_login.status_code == status.HTTP_200_OK
+
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user("admin2@mail.com")
+            utils_for_tests.delete_test_user("admin@mail.com")
+
+
+    def test_update_user_only_avatar(self) -> None:
+        try:
+            # create new user
+            res_register = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                            "password": "admin", 
+                                                            "phone_number": "+79120347221", 
+                                                            "name": "Alex"})
+            
+            assert res_register.status_code == status.HTTP_201_CREATED
+            res_register_data = res_register.json()
+            res_register_data_converted = RegisterUserResponse(**res_register_data)
+
+            # login user
+            res_login = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
+            assert res_login.status_code == status.HTTP_200_OK
+            res_login_data = res_login.json()
+            login_data_converted = LoginUserResponse(**res_login_data)
+
+            # get token to the header
+            self.client.headers = {
+                **self.client.headers,
+                "Authorization": f"Bearer {login_data_converted.access_token}"}
+
+            # update payload
+            update_payload = {"avatar": "https://www.w3schools.com/w3images/avatar2.png"}
+
+            # test response status code
+            res_update_user = self.client.patch(f"/users/{res_register_data_converted.user_id}", json=update_payload)
+            assert res_update_user.status_code == status.HTTP_200_OK
+
+            # test response data
+            res_update_user_data = res_update_user.json()
+            res_update_user_data_converted = UpdateUserResponse(**res_update_user_data)
+            assert res_update_user_data_converted.email == "admin@mail.com"
+            assert res_update_user_data_converted.phone_number == "+79120347221"
+            assert res_update_user_data_converted.name == "Alex"
+            assert res_update_user_data_converted.avatar == "https://www.w3schools.com/w3images/avatar2.png"
+
+            # login user after changes
+            res_login = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
+            assert res_login.status_code == status.HTTP_200_OK
+
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user("admin2@mail.com")
+            utils_for_tests.delete_test_user("admin@mail.com")
 

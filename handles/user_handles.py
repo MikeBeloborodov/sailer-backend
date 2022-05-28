@@ -5,7 +5,7 @@ from schemas.user_schemas.update_user_request import UpdateUserRequest
 from database.models import User
 from fastapi import HTTPException, status
 from passlib.context import CryptContext
-from database.utils import time_stamp
+from database.utils import *
 from authentication import oauth
 from schemas.user_schemas.login_user_response import LoginUserResponse
 from datetime import datetime
@@ -88,30 +88,52 @@ def handle_update_user_by_id(user_to_update_id: int,
                             db: Session):
     try:
         # get user with this id from db
-        old_user_query = db.query(User).filter(User.user_id == user_to_update_id)
-        old_user = old_user_query.first()
+        user_to_update_query = db.query(User).filter(User.user_id == user_to_update_id)
+        user_to_update = user_to_update_query.first()
     except Exception as db_error:
         print(f"[!!] DB error occured: {db_error}")
 
     # check if it exists
-    if not old_user:
+    if not user_to_update:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="User with this id does not exist")
     
     # check if user trying to update has the same id
-    if old_user.user_id != user_id:
+    if user_to_update.user_id != user_id:
         raise HTTPException(status.HTTP_403_FORBIDDEN, detail="No access")
 
+    # compile update payload
+    update_payload = user_update_data.dict()
+    update_payload['updated_at'] = datetime.now()
+    update_payload = remove_empty_keys(update_payload)
+
+    # if user updating password
+    if check_if_dict_has_key(update_payload, 'password'):
+        pwd_context = CryptContext(schemes=['bcrypt'])
+        update_payload["password"] = pwd_context.hash(update_payload["password"])
+
+    # if user updating phone number
+    if check_if_dict_has_key(update_payload, 'phone_number'):
+        same_phone_query = db.query(User).filter(User.phone_number == update_payload['phone_number'])
+        same_phone_user = same_phone_query.first()
+        if same_phone_user:
+            raise HTTPException(status.HTTP_403_FORBIDDEN, detail="User with this phone number already exists.")
+    
+    # if user updating email
+    if check_if_dict_has_key(update_payload, 'email'):
+        same_email_query = db.query(User).filter(User.email == update_payload['email'])
+        same_email_user = same_email_query.first()
+        if same_email_user:
+            raise HTTPException(status.HTTP_403_FORBIDDEN, detail="User with this phone email already exists.")
+            
     # save updates to db
     try:
-        updated_user = user_update_data.dict()
-        updated_user['updated_at'] = datetime.now()
-        old_user_query.update(updated_user, synchronize_session=False)
+        user_to_update_query.update(update_payload, synchronize_session=False)
         db.commit()
-        db.refresh(old_user)
+        db.refresh(user_to_update)
     except Exception as update_error:
         print(f"[!!] DB error while updating user: {update_error}")
     
-    return old_user
+    return user_to_update
 
 
 

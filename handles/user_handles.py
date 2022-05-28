@@ -69,7 +69,7 @@ def handle_login_user(login_data: LoginUserRequest, db: Session):
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database internal error during user search")
 
     if not found_user:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="Wrong credentials.")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="User not found.")
     
     # then we check if stored hashed password and given password are the same
     pwd_context = CryptContext(schemes=['bcrypt'])

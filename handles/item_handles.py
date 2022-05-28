@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
+from datetime import datetime
 from database.utils import time_stamp
 from database.models import Item
 from schemas.item_schemas.register_item_request import RegisterItemRequest
@@ -34,6 +35,7 @@ def handle_get_all_items(user_id: int, db: Session):
         items = (db.query(Item)
                     .filter(Item.deleted != 'true')
                     .filter(Item.sold != 'true')
+                    .order_by(Item.item_id)
                     .all())
     except Exception as execution_error:
         print(execution_error)
@@ -49,7 +51,7 @@ def handle_get_all_items(user_id: int, db: Session):
     return items
 
 
-def handle_get_item_by_id(user_id: int, item_id: int, db: Session):
+def handle_get_item_by_id(item_id: int, user_id: int, db: Session):
     try:
         item = (db.query(Item)
                 .filter(Item.item_id == item_id)
@@ -68,3 +70,36 @@ def handle_get_item_by_id(user_id: int, item_id: int, db: Session):
     
     # if ok return the item
     return found_item
+
+
+def handle_delete_item_by_id(item_id: int, user_id: int, db: Session):
+    # check if item exists
+    try:
+        item_to_delete_query = (db.query(Item)
+                                    .filter(Item.item_id == item_id)
+                                    .filter(Item.deleted != 'true')
+                                    .filter(Item.sold != 'true'))
+        item_to_delete = item_to_delete_query.first()
+    except Exception as search_error:
+        print(f"[!!] Error occured during search: {search_error}")
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error.")
+
+    if not item_to_delete:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Item you are trying to delete does not exist.")
+    
+    # check if owner id and user id are the same
+    if item_to_delete.owner_id != user_id:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="You do not have access.")
+
+    # set item as deleted
+    update_payload = {"deleted": True, "updated_at": datetime.now()}
+    try:
+        item_to_delete_query.update(update_payload, synchronize_session=False)
+        db.commit()
+        db.refresh(item_to_delete)
+    except Exception as execution_error:
+        print(f"[!!] Failed updating 'deleted' status of item, error: {execution_error}")
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error.")
+    
+    return item_to_delete
+

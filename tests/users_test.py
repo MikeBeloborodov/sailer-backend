@@ -226,7 +226,7 @@ class TestUsers(unittest.TestCase):
                                                             "name": "Alex"})
 
             res = self.client.get("/users/login", json={"email": "aadmin@mail.com", "password": "admin"})
-            assert res.status_code == status.HTTP_403_FORBIDDEN
+            assert res.status_code == status.HTTP_404_NOT_FOUND
         except Exception as error:
             raise error
         finally:
@@ -733,7 +733,7 @@ class TestUsers(unittest.TestCase):
                                                             "name": "Alexa"})
             
             assert res_register2.status_code == status.HTTP_201_CREATED
-            res_register2_data = res_register.json()
+            res_register2_data = res_register2.json()
             res_register2_data_converted = RegisterUserResponse(**res_register2_data)
 
             # login user
@@ -761,6 +761,7 @@ class TestUsers(unittest.TestCase):
         except Exception as error:
             raise error
         finally:
+            utils_for_tests.delete_test_user("admin23@mail.com")
             utils_for_tests.delete_test_user("admin2@mail.com")
             utils_for_tests.delete_test_user("admin@mail.com")
 

@@ -23,3 +23,10 @@ def check_if_dict_has_key(dict_to_check: dict, key_to_check: str) -> bool:
             return True
     
     return False
+
+def check_if_dict_is_empty(dict_to_check: dict) -> bool:
+    for value in dict_to_check.values():
+        if value != None:
+            return False
+
+    return True

@@ -86,6 +86,10 @@ def handle_update_user_by_id(user_to_update_id: int,
                             user_update_data: UpdateUserRequest, 
                             user_id: int, 
                             db: Session):
+    # check if update_data is empty
+    if check_if_dict_is_empty(user_update_data.dict()):
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="You are sending an empty update, or an update with keys that you do not have access to.")
+    
     try:
         # get user with this id from db
         user_to_update_query = db.query(User).filter(User.user_id == user_to_update_id)

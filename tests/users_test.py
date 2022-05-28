@@ -1,3 +1,4 @@
+from datetime import datetime
 import unittest
 from fastapi.testclient import TestClient
 from fastapi import status
@@ -651,7 +652,7 @@ class TestUsers(unittest.TestCase):
                 "Authorization": f"Bearer {login_data_converted.access_token}"}
 
             # update payload
-            update_payload = {"avatar": "https://www.w3schools.com/w3images/avatar2.png"}
+            update_payload = {"avatar": "https://www.w3schools.com/howto/img_avatar.png"}
 
             # test response status code
             res_update_user = self.client.patch(f"/users/{res_register_data_converted.user_id}", json=update_payload)
@@ -663,7 +664,7 @@ class TestUsers(unittest.TestCase):
             assert res_update_user_data_converted.email == "admin@mail.com"
             assert res_update_user_data_converted.phone_number == "+79120347221"
             assert res_update_user_data_converted.name == "Alex"
-            assert res_update_user_data_converted.avatar == "https://www.w3schools.com/w3images/avatar2.png"
+            assert res_update_user_data_converted.avatar == "https://www.w3schools.com/howto/img_avatar.png"
 
             # login user after changes
             res_login = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
@@ -674,4 +675,93 @@ class TestUsers(unittest.TestCase):
         finally:
             utils_for_tests.delete_test_user("admin2@mail.com")
             utils_for_tests.delete_test_user("admin@mail.com")
+
+
+    def test_update_user_restricted_keys(self) -> None:
+        try:
+            # create new user
+            res_register = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                            "password": "admin", 
+                                                            "phone_number": "+79120347221", 
+                                                            "name": "Alex"})
+            
+            assert res_register.status_code == status.HTTP_201_CREATED
+            res_register_data = res_register.json()
+            res_register_data_converted = RegisterUserResponse(**res_register_data)
+
+            # login user
+            res_login = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
+            assert res_login.status_code == status.HTTP_200_OK
+            res_login_data = res_login.json()
+            login_data_converted = LoginUserResponse(**res_login_data)
+
+            # get token to the header
+            self.client.headers = {
+                **self.client.headers,
+                "Authorization": f"Bearer {login_data_converted.access_token}"}
+
+            # update payload
+            update_payload = {"user_credits": 10000000,
+                            "created_at": f"{datetime.now()}",
+                            "updated_at": f"{datetime.now()}",
+                            "user_id": 32}
+
+            # test response status code
+            res_update_user = self.client.patch(f"/users/{res_register_data_converted.user_id}", json=update_payload)
+            assert res_update_user.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user("admin2@mail.com")
+            utils_for_tests.delete_test_user("admin@mail.com")
+
+
+    def test_update_user_wrong_credentials(self) -> None:
+        try:
+            # create new user
+            res_register = self.client.post("/users/register", json={"email": "admin@mail.com", 
+                                                            "password": "admin", 
+                                                            "phone_number": "+79120347221", 
+                                                            "name": "Alex"})
+            
+            assert res_register.status_code == status.HTTP_201_CREATED
+
+            # create another user
+            res_register2 = self.client.post("/users/register", json={"email": "admin2@mail.com", 
+                                                            "password": "admin2", 
+                                                            "phone_number": "+79130347221", 
+                                                            "name": "Alexa"})
+            
+            assert res_register2.status_code == status.HTTP_201_CREATED
+            res_register2_data = res_register.json()
+            res_register2_data_converted = RegisterUserResponse(**res_register2_data)
+
+            # login user
+            res_login = self.client.get("/users/login", json={"email": "admin@mail.com", "password": "admin"})
+            assert res_login.status_code == status.HTTP_200_OK
+            res_login_data = res_login.json()
+            login_data_converted = LoginUserResponse(**res_login_data)
+
+            # get token to the header
+            self.client.headers = {
+                **self.client.headers,
+                "Authorization": f"Bearer {login_data_converted.access_token}"}
+
+            # update payload
+            update_payload = {"email": "admin23@mail.com", 
+                            "password": "admin23", 
+                            "phone_number": "+79130357221", 
+                            "name": "Kirill",
+                            "avatar": "https://www.w3schools.com/howto/img_avatar.png"}
+
+            # test response status code
+            res_update_user = self.client.patch(f"/users/{res_register2_data_converted.user_id}", json=update_payload)
+            assert res_update_user.status_code == status.HTTP_403_FORBIDDEN
+
+        except Exception as error:
+            raise error
+        finally:
+            utils_for_tests.delete_test_user("admin2@mail.com")
+            utils_for_tests.delete_test_user("admin@mail.com")
+
 
